@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Freezing Point Depression Lab</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="titration.html">Titration</a>
+    <a href="freezing_point.html" style="text-decoration: underline;">Freezing Point</a>
+    <a href="heat_of_fusion.html">Heat of Fusion</a>
+    <a href="reaction_rates.html">Reaction Rates</a>
+  </nav>
+  <h1>Freezing Point Depression Lab</h1>
+  <div class="settings">
+    <label>Solute mass (g): <input id="soluteMass" type="number" value="1.00" /></label>
+    <label>Solvent mass (g): <input id="solventMass" type="number" value="100" /></label>
+    <label>Kf (°C·kg/mol): <input id="kf" type="number" value="1.86" /></label>
+    <label>Molar mass (g/mol): <input id="molarMass" type="number" value="58.44" /></label>
+    <button onclick="calc()">Calculate</button>
+  </div>
+  <p id="result"></p>
+
+  <script>
+    function calc() {
+      const solute = parseFloat(document.getElementById('soluteMass').value);
+      const solvent = parseFloat(document.getElementById('solventMass').value);
+      const kf = parseFloat(document.getElementById('kf').value);
+      const molarMass = parseFloat(document.getElementById('molarMass').value);
+      const molality = (solute / molarMass) / (solvent / 1000);
+      const deltaTf = kf * molality;
+      const newFp = 0 - deltaTf;
+      document.getElementById('result').textContent =
+        `Freezing point depression: ${deltaTf.toFixed(2)} °C → New FP: ${newFp.toFixed(2)} °C`;
+    }
+  </script>
+</body>
+</html>
