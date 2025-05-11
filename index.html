@@ -1,0 +1,34 @@
+<body>
+  <h1>Acid-Base Titration Simulator</h1>
+
+  <div class="container">
+    <div class="lab-controls">
+      <label>Acid Type:
+        <select id="acid-select">
+          <option value="HCl">HCl (Strong)</option>
+          <option value="CH3COOH">CH₃COOH (Weak)</option>
+        </select>
+      </label>
+
+      <label>Acid Concentration (M): 
+        <input type="number" id="acid-conc" value="0.1" step="0.01"/>
+      </label>
+
+      <label>Acid Volume (mL): 
+        <input type="number" id="acid-vol" value="25"/>
+      </label>
+
+      <label>Base Concentration (M): 
+        <input type="number" id="base-conc" value="0.1" step="0.01"/>
+      </label>
+
+      <label>&nbsp;
+        <button id="start-btn">Start Titration</button>
+      </label>
+    </div>
+
+    <canvas id="titrationChart" width="800" height="400"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
