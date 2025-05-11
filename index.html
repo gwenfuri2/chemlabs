@@ -1,34 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemistry Sim Labs</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 <body>
-  <h1>Acid-Base Titration Simulator</h1>
-
-  <div class="container">
-    <div class="lab-controls">
-      <label>Acid Type:
-        <select id="acid-select">
-          <option value="HCl">HCl (Strong)</option>
-          <option value="CH3COOH">CH₃COOH (Weak)</option>
-        </select>
-      </label>
-
-      <label>Acid Concentration (M): 
-        <input type="number" id="acid-conc" value="0.1" step="0.01"/>
-      </label>
-
-      <label>Acid Volume (mL): 
-        <input type="number" id="acid-vol" value="25"/>
-      </label>
-
-      <label>Base Concentration (M): 
-        <input type="number" id="base-conc" value="0.1" step="0.01"/>
-      </label>
-
-      <label>&nbsp;
-        <button id="start-btn">Start Titration</button>
-      </label>
-    </div>
-
-    <canvas id="titrationChart" width="800" height="400"></canvas>
+  <h1>Welcome to Chemistry Sim Labs</h1>
+  <p>Select a lab simulation to begin:</p>
+  <div class="lab-links">
+    <a href="titration.html" class="lab-card">Acid-Base Titration</a>
+    <a href="freezing_point.html" class="lab-card">Freezing Point Depression</a>
+    <a href="heat_of_fusion.html" class="lab-card">Heat of Fusion</a>
+    <a href="reaction_rates.html" class="lab-card">Reaction Rates</a>
   </div>
-
-  <script src="script.js"></script>
 </body>
+</html>
