@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Titration Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .sparkle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: gold;
+      border-radius: 50%;
+      box-shadow: 0 0 8px gold;
+      opacity: 0.9;
+      animation: sparkleFade 1s ease-out forwards;
+    }
+    @keyframes sparkleFade {
+      0% { transform: scale(0.5); opacity: 0.9; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="titration.html" style="text-decoration: underline;">Titration</a>
+    <a href="freezing_point.html">Freezing Point</a>
+    <a href="heat_of_fusion.html">Heat of Fusion</a>
+    <a href="reaction_rates.html">Reaction Rates</a>
+  </nav>
+
+  <h1>Acid-Base Titration Lab</h1>
+  <div class="settings">
+    <label>Acid:
+      <select id="acid">
+        <option value="HCl">HCl (strong)</option>
+        <option value="CH3COOH">CH₃COOH (weak)</option>
+      </select>
+    </label>
+    <label>Base:
+      <select id="base">
+        <option value="NaOH">NaOH (strong)</option>
+        <option value="NH3">NH₃ (weak)</option>
+      </select>
+    </label>
+    <label>
+      <input type="checkbox" id="indicatorToggle"> Use Indicator (Phenolphthalein)
+    </label>
+    <button onclick="toggleTitration()" id="toggleBtn">Start Titration</button>
+    <button onclick="resetLab()">Reset</button>
+  </div>
+
+  <div style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;">
+    <div id="flaskWrapper" style="position: relative; width: 120px; height: 250px;">
+      <svg viewBox="0 0 100 250" style="width: 100%; height: 100%;">
+        <path d="M45 0 L55 0 L65 120 L85 220 Q50 240 15 220 L35 120 Z" fill="none" stroke="#3f51b5" stroke-width="3" />
+        <path id="solution" class="solution" d="" fill="#aed8f7" />
+      </svg>
+      <div id="dropArea" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+    </div>
+
+    <div style="width: 400px;">
+      <canvas id="titrationChart"></canvas>
+      <p id="phDisplay">pH: 2.00</p>
+      <p id="volumeDisplay">Volume Added: 0.0 mL</p>
+    </div>
+  </div>
+
+  <script>
+    let volume = 0;
+    let phData = [];
+    let volData = [];
+    let isTitrating = false;
+    let intervalID = null;
+
+    const dropArea = document.getElementById("dropArea");
+    const flaskWrapper = document.getElementById("flaskWrapper");
+    const solution = document.getElementById("solution");
+    const phDisplay = document.getElementById("phDisplay");
+    const volumeDisplay = document.getElementById("volumeDisplay");
+    const toggleBtn = document.getElementById("toggleBtn");
+    const ctx = document.getElementById("titrationChart").getContext("2d");
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'pH vs Volume (mL)',
+          data: [],
+          borderColor: '#3f51b5',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.2
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Volume of Base (mL)'
+            }
+          },
+          y: {
+            min: 0,
+            max: 14,
+            title: {
+              display: true,
+              text: 'pH'
+            }
+          }
+        }
+      }
+    });
+
+    function getPH(n_acid, n_base, totalVolume, acidType, baseType) {
+      if (acidType === "CH3COOH" && baseType === "NaOH") {
+        if (n_base < n_acid) {
+          return 4.7 + Math.log10(n_base / (n_acid - n_base));
+        } else if (n_base === n_acid) {
+          return 8.7;
+        } else {
+          const OH = (n_base - n_acid) / totalVolume;
+          return 14 + Math.log10(OH);
+        }
+      } else {
+        if (n_base < n_acid) {
+          const H3O = (n_acid - n_base) / totalVolume;
+          return -Math.log10(H3O);
+        } else if (n_base === n_acid) {
+          return 7;
+        } else {
+          const OH = (n_base - n_acid) / totalVolume;
+          return 14 + Math.log10(OH);
+        }
+      }
+    }
+
+    function updateSolutionPath(volume) {
+      const level = 120 + (volume / 50) * 90;
+      const path = `M35 ${level} L65 ${level} L80 210 Q50 225 20 210 Z`;
+      solution.setAttribute("d", path);
+    }
+
+    function sparkle() {
+      for (let i = 0; i < 6; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.className = "sparkle";
+        sparkle.style.left = `${Math.random() * 100}px`;
+        sparkle.style.top = `${100 + Math.random() * 80}px`;
+        flaskWrapper.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1000);
+      }
+    }
+
+    function addDrop() {
+      if (volume >= 50) return stopTitration();
+
+      volume += 0.5;
+      const acidType = document.getElementById("acid").value;
+      const baseType = document.getElementById("base").value;
+      const useIndicator = document.getElementById("indicatorToggle").checked;
+      const c_acid = 0.1;
+      const c_base = 0.1;
+      const V_acid = 25;
+      const n_acid = c_acid * V_acid / 1000;
+      const n_base = c_base * volume / 1000;
+      const totalVolume = (V_acid + volume) / 1000;
+
+      const pH = getPH(n_acid, n_base, totalVolume, acidType, baseType);
+
+      phDisplay.textContent = `pH: ${pH.toFixed(2)}`;
+      volumeDisplay.textContent = `Volume Added: ${volume.toFixed(1)} mL`;
+
+      const drop = document.createElement("div");
+      drop.className = "burette-drop";
+      drop.style.position = 'absolute';
+      drop.style.top = '0px';
+      drop.style.left = '50%';
+      drop.style.width = '10px';
+      drop.style.height = '10px';
+      drop.style.borderRadius = '50%';
+      drop.style.backgroundColor = '#3f51b5';
+      drop.style.animation = 'drop 0.5s ease-out';
+      dropArea.appendChild(drop);
+      setTimeout(() => drop.remove(), 600);
+
+      if (useIndicator) {
+        solution.setAttribute("fill", pH >= 8.2 ? "#ffc0cb" : "#aed8f7");
+      }
+
+      updateSolutionPath(volume);
+
+      phData.push(pH.toFixed(2));
+      volData.push(volume.toFixed(1));
+      chart.data.labels = volData;
+      chart.data.datasets[0].data = phData;
+      chart.update();
+
+      if (Math.abs(pH - 7) < 0.2) sparkle();
+    }
+
+    function toggleTitration() {
+      if (isTitrating) {
+        stopTitration();
+      } else {
+        isTitrating = true;
+        toggleBtn.textContent = "Stop Titration";
+        intervalID = setInterval(addDrop, 500);
+      }
+    }
+
+    function stopTitration() {
+      isTitrating = false;
+      toggleBtn.textContent = "Start Titration";
+      clearInterval(intervalID);
+    }
+
+    function resetLab() {
+      stopTitration();
+      volume = 0;
+      phData = [];
+      volData = [];
+      solution.setAttribute("fill", "#aed8f7");
+      updateSolutionPath(volume);
+      phDisplay.textContent = "pH: 2.00";
+      volumeDisplay.textContent = "Volume Added: 0.0 mL";
+      chart.data.labels = [];
+      chart.data.datasets[0].data = [];
+      chart.update();
+    }
+
+    updateSolutionPath(volume);
+  </script>
+</body>
+</html>
