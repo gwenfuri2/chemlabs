@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reaction Rate Lab</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="titration.html">Titration</a>
+    <a href="freezing_point.html">Freezing Point</a>
+    <a href="heat_of_fusion.html">Heat of Fusion</a>
+    <a href="reaction_rates.html" style="text-decoration: underline;">Reaction Rates</a>
+  </nav>
+  <h1>Reaction Rate Lab</h1>
+  <div class="settings">
+    <label>Δ[Reactant] (mol/L): <input id="conc" type="number" value="0.10" /></label>
+    <label>ΔTime (s): <input id="time" type="number" value="30" /></label>
+    <button onclick="rate()">Calculate</button>
+  </div>
+  <p id="result"></p>
+
+  <script>
+    function rate() {
+      const conc = parseFloat(document.getElementById('conc').value);
+      const time = parseFloat(document.getElementById('time').value);
+      const r = conc / time;
+      document.getElementById('result').textContent = `Rate = ${r.toFixed(4)} mol/L·s`;
+    }
+  </script>
+</body>
+</html>
