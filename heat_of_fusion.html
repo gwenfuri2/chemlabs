@@ -2,9 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Heat of Fusion Lab</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .lab-stage { display: none; margin-top: 20px; }
+    .lab-stage.active { display: block; }
+    .toggle-box { margin: 20px auto; text-align: center; }
+    #calorimeter {
+      width: 120px;
+      height: 200px;
+      margin: 20px auto;
+      position: relative;
+      background: #ddd;
+      border: 4px solid #888;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #ice {
+      position: absolute;
+      bottom: 60px;
+      width: 100%;
+      height: 30px;
+      background: #ccf;
+      transition: height 1s ease;
+    }
+    #water {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60px;
+      background: #add8e6;
+      transition: height 1s ease;
+    }
+    #thermometer {
+      margin: 0 auto;
+      width: 10px;
+      height: 100px;
+      background: #eee;
+      border: 2px solid #aaa;
+      border-radius: 5px;
+      position: relative;
+    }
+    #mercury {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: red;
+      height: 0%;
+      transition: height 1s ease;
+    }
+    .controls { margin-top: 30px; }
+    .summary-box {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #f4faff;
+    }
+  </style>
 </head>
 <body>
   <nav>
@@ -14,20 +73,153 @@
     <a href="heat_of_fusion.html" style="text-decoration: underline;">Heat of Fusion</a>
     <a href="reaction_rates.html">Reaction Rates</a>
   </nav>
-  <h1>Heat of Fusion Lab</h1>
-  <div class="settings">
-    <label>Mass (g): <input id="mass" type="number" value="10.0" /></label>
-    <label>ΔH<sub>fus</sub> (J/g): <input id="heatFusion" type="number" value="334" /></label>
-    <button onclick="calculateHeat()">Calculate q</button>
+
+  <h1>Heat of Fusion Step-by-Step SimLab</h1>
+
+  <div class="toggle-box">
+    <label>
+      Temperature Unit:
+      <select id="tempUnit">
+        <option value="C">°C</option>
+        <option value="K">Kelvin</option>
+      </select>
+    </label>
+    &nbsp;&nbsp;
+    <label>
+      Mass Unit:
+      <select id="massUnit">
+        <option value="g">grams (g)</option>
+        <option value="kg">kilograms (kg)</option>
+      </select>
+    </label>
   </div>
-  <p id="result"></p>
+
+  <div id="step1" class="lab-stage active">
+    <p>Step 1: Warm 50.0 g of water to 70°C.</p>
+    <div id="thermometer">
+      <div id="mercury" style="height: 70%;"></div>
+    </div>
+  </div>
+
+  <div id="step2" class="lab-stage">
+    <p>Step 2: Measure mass of water (50 g) and ice (30 g).</p>
+    <p>Click “Next” to simulate adding ice to the calorimeter.</p>
+  </div>
+
+  <div id="step3" class="lab-stage">
+    <p>Step 3: Ice is added to the calorimeter.</p>
+    <div id="calorimeter">
+      <div id="ice"></div>
+      <div id="water"></div>
+    </div>
+  </div>
+
+  <div id="step4" class="lab-stage">
+    <p>Step 4: Pouring hot water into the calorimeter...</p>
+    <p>Temperature drops to 1.0°C as heat is transferred.</p>
+    <div id="thermometer">
+      <div id="mercury" style="height: 1%;"></div>
+    </div>
+  </div>
+
+  <div id="step5" class="lab-stage">
+    <p>Step 5: Calculate heat of fusion from observed data.</p>
+    <button onclick="calculateFusion()">Calculate</button>
+  </div>
+
+  <div id="step6" class="lab-stage">
+    <h3>Results Summary</h3>
+    <div class="summary-box">
+      <p><strong>Heat lost by water:</strong> <span id="qWater">—</span> kJ</p>
+      <p><strong>Heat gained by ice:</strong> <span id="qIce">—</span> kJ</p>
+      <p><strong>Heat of fusion:</strong>
+        <span id="heatFusion">—</span> kJ/g |
+        <span id="heatFusionKG">—</span> kJ/kg
+      </p>
+      <p><strong>Molar heat of fusion:</strong> <span id="molarFusion">—</span> kJ/mol</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="nextBtn" onclick="nextStep()">Next Step</button>
+    <button onclick="resetSim()">Reset</button>
+  </div>
 
   <script>
-    function calculateHeat() {
-      const mass = parseFloat(document.getElementById("mass").value);
-      const heatFusion = parseFloat(document.getElementById("heatFusion").value);
-      const q = mass * heatFusion;
-      document.getElementById("result").textContent = `Total heat (q): ${q.toFixed(2)} J`;
+    const specificHeat = 4.184; // J/g°C
+    const molarMassIce = 18.02;
+    const baseWaterMass = 50;
+    const baseIceMass = 30;
+    const baseTempStart = 70;
+    const baseTempEnd = 1;
+
+    let currentStep = 1;
+
+    function convertTemp(val, unit) {
+      return unit === "K" ? val - 273.15 : val;
+    }
+
+    function convertMass(val, unit) {
+      return unit === "kg" ? val * 1000 : val;
+    }
+
+    function nextStep() {
+      document.getElementById(`step${currentStep}`).classList.remove("active");
+      currentStep++;
+      document.getElementById(`step${currentStep}`).classList.add("active");
+
+      if (currentStep === 3) {
+        document.getElementById("ice").style.height = "30px";
+        document.getElementById("water").style.height = "60px";
+      }
+
+      if (currentStep === 4) {
+        document.getElementById("ice").style.height = "0px";
+        document.getElementById("water").style.height = "90px";
+        document.querySelectorAll("#thermometer #mercury").forEach(el => {
+          el.style.height = "1%";
+        });
+      }
+
+      if (currentStep === 6) {
+        document.getElementById("nextBtn").style.display = "none";
+      }
+    }
+
+    function calculateFusion() {
+      const tempUnit = document.getElementById("tempUnit").value;
+      const massUnit = document.getElementById("massUnit").value;
+
+      const mWater = convertMass(baseWaterMass, massUnit);
+      const mIce = convertMass(baseIceMass, massUnit);
+      const tStart = convertTemp(baseTempStart, tempUnit);
+      const tEnd = convertTemp(baseTempEnd, tempUnit);
+
+      const qWaterJ = mWater * specificHeat * (tStart - tEnd);
+      const qWaterKJ = qWaterJ / 1000;
+      const heatFusionPerGram = qWaterKJ / mIce;
+      const heatFusionPerKg = heatFusionPerGram * 1000;
+      const molarFusion = heatFusionPerGram * molarMassIce;
+
+      document.getElementById("qWater").textContent = qWaterKJ.toFixed(2);
+      document.getElementById("qIce").textContent = qWaterKJ.toFixed(2);
+      document.getElementById("heatFusion").textContent = heatFusionPerGram.toFixed(3);
+      document.getElementById("heatFusionKG").textContent = heatFusionPerKg.toFixed(2);
+      document.getElementById("molarFusion").textContent = molarFusion.toFixed(2);
+
+      nextStep();
+    }
+
+    function resetSim() {
+      document.querySelectorAll(".lab-stage").forEach(el => el.classList.remove("active"));
+      document.getElementById("step1").classList.add("active");
+      document.getElementById("ice").style.height = "30px";
+      document.getElementById("water").style.height = "60px";
+      document.querySelectorAll("#thermometer #mercury").forEach(el => {
+        el.style.height = "70%";
+      });
+      currentStep = 1;
+      document.getElementById("nextBtn").style.display = "inline-block";
     }
   </script>
 </body>
