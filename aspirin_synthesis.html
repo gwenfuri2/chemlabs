@@ -37,36 +37,94 @@
     </ul>
 
     <h2>4. Procedure</h2>
-    <ol>
-  <li>
-    Weigh ~0.2 g of salicylic acid and place it into an Erlenmeyer flask.
+<div id="procedure-steps" class="stepbox">
+  <div class="step active">
+    <h3>Step 1</h3>
+    <p>Weigh ~0.2 g of salicylic acid and place it into an Erlenmeyer flask.</p>
     <p class="step-explanation">Salicylic acid is the starting material that will be acetylated to form aspirin. Precise weighing ensures accurate stoichiometry.</p>
-  </li>
-  <li>
-    Add 2.0 mL of acetic anhydride and 3 drops of concentrated sulfuric acid.
+  </div>
+  <div class="step">
+    <h3>Step 2</h3>
+    <p>Add 2.0 mL of acetic anhydride and 3 drops of concentrated sulfuric acid.</p>
     <p class="step-explanation">Acetic anhydride is the acetylating agent, and sulfuric acid acts as a catalyst to increase the reaction rate by protonating the carbonyl oxygen.</p>
-  </li>
-  <li>
-    Swirl gently and heat in a 70°C water bath for 10–15 minutes.
+  </div>
+  <div class="step">
+    <h3>Step 3</h3>
+    <p>Swirl gently and heat in a 70°C water bath for 10–15 minutes.</p>
     <p class="step-explanation">Heating the reaction speeds up ester formation and allows the reaction to proceed toward completion.</p>
-  </li>
-  <li>
-    Cool the flask in an ice bath and slowly add 10 mL of cold distilled water to decompose excess acetic anhydride.
+  </div>
+  <div class="step">
+    <h3>Step 4</h3>
+    <p>Cool the flask in an ice bath and slowly add 10 mL of cold distilled water to decompose excess acetic anhydride.</p>
     <p class="step-explanation">Cooling and adding water quenches the reaction and precipitates the aspirin product out of the solution.</p>
-  </li>
-  <li>
-    Allow crystals to form and collect them using vacuum filtration.
+  </div>
+  <div class="step">
+    <h3>Step 5</h3>
+    <p>Allow crystals to form and collect them using vacuum filtration.</p>
     <p class="step-explanation">Crystallization separates the solid aspirin from the liquid mixture. Filtration allows for isolation and drying of the product.</p>
-  </li>
-  <li>
-    Weigh the crystals and observe physical properties (color, texture).
+  </div>
+  <div class="step">
+    <h3>Step 6</h3>
+    <p>Weigh the crystals and observe physical properties (color, texture).</p>
     <p class="step-explanation">Weighing helps determine the yield. Observing color/texture helps assess product quality and potential impurities.</p>
-  </li>
-  <li>
-    Test for purity using the ferric chloride test (color change indicates presence of phenol groups).
+  </div>
+  <div class="step">
+    <h3>Step 7</h3>
+    <p>Test for purity using the ferric chloride test (color change indicates presence of phenol groups).</p>
     <p class="step-explanation">The FeCl₃ test detects unreacted salicylic acid by producing a violet complex with phenol groups. A light color suggests higher purity.</p>
-  </li>
-</ol>
+  </div>
+</div>
+<div id="progress-bar" style="height: 10px; width: 100%; background: #eee; margin-top: 20px;">
+  <div id="progress-fill" style="height: 100%; width: 0%; background: #3f51b5;"></div>
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+  <button onclick="prevStep()">⬅ Back</button>
+  <button onclick="nextStep()">Next ➡</button>
+  <br/><br/>
+  <label><input type="checkbox" id="narrateToggle"> Narrate steps</label>
+</div>
+
+<style>
+.stepbox .step { display: none; margin-top: 1rem; }
+.stepbox .step.active { display: block; }
+</style>
+<script>
+let currentStep = 0;
+const steps = document.querySelectorAll('.stepbox .step');
+
+function showStep(index) {
+  steps.forEach((step, i) => step.classList.toggle('active', i === index));
+  updateProgressBar();
+  narrate(steps[index].innerText);
+}
+function nextStep() {
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    showStep(currentStep);
+
+function updateProgressBar() {
+  const percent = ((currentStep + 1) / steps.length) * 100;
+  document.getElementById('progress-fill').style.width = percent + '%';
+}
+
+function narrate(text) {
+  if (document.getElementById('narrateToggle').checked) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    speechSynthesis.cancel(); // cancel any current speech
+    speechSynthesis.speak(utterance);
+  }
+}
+  }
+}
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+showStep(currentStep);
+</script>
 
     <h2>5. Data</h2>
     <ul>
