@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspirin Synthesis Lab</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="titration.html">Titration</a>
+    <a href="freezing_point.html">Freezing Point</a>
+    <a href="heat_of_fusion.html">Heat of Fusion</a>
+    <a href="reaction_rates.html">Reaction Rates</a>
+    <a href="aspirin_synthesis.html" style="text-decoration: underline;">Aspirin Synthesis</a>
+  </nav>
+
+  <main class="container">
+    <h1>Aspirin Synthesis</h1>
+
+    <h2>1. Purpose</h2>
+    <p>Aspirin (acetylsalicylic acid) is synthesized through an esterification reaction involving salicylic acid and acetic anhydride in the presence of an acid catalyst. The goal is to observe the formation of aspirin and evaluate its purity through melting point analysis and the ferric chloride test.</p>
+
+    <h2>2. Theory</h2>
+    <p>The hydroxyl (-OH) group of salicylic acid reacts with acetic anhydride, catalyzed by sulfuric or phosphoric acid, to form the ester acetylsalicylic acid. This is a common organic chemistry example of a nucleophilic acyl substitution mechanism.</p>
+
+    <h2>3. Materials</h2>
+    <ul>
+      <li>Salicylic acid</li>
+      <li>Acetic anhydride</li>
+      <li>Concentrated sulfuric acid (H₂SO₄)</li>
+      <li>Ice bath</li>
+      <li>Erlenmeyer flask, glass stirring rod, watch glass</li>
+      <li>Distilled water</li>
+      <li>Ferric chloride solution (1%)</li>
+    </ul>
+
+    <h2>4. Procedure</h2>
+    <ol>
+  <li>
+    Weigh ~0.2 g of salicylic acid and place it into an Erlenmeyer flask.
+    <p class="step-explanation">Salicylic acid is the starting material that will be acetylated to form aspirin. Precise weighing ensures accurate stoichiometry.</p>
+  </li>
+  <li>
+    Add 2.0 mL of acetic anhydride and 3 drops of concentrated sulfuric acid.
+    <p class="step-explanation">Acetic anhydride is the acetylating agent, and sulfuric acid acts as a catalyst to increase the reaction rate by protonating the carbonyl oxygen.</p>
+  </li>
+  <li>
+    Swirl gently and heat in a 70°C water bath for 10–15 minutes.
+    <p class="step-explanation">Heating the reaction speeds up ester formation and allows the reaction to proceed toward completion.</p>
+  </li>
+  <li>
+    Cool the flask in an ice bath and slowly add 10 mL of cold distilled water to decompose excess acetic anhydride.
+    <p class="step-explanation">Cooling and adding water quenches the reaction and precipitates the aspirin product out of the solution.</p>
+  </li>
+  <li>
+    Allow crystals to form and collect them using vacuum filtration.
+    <p class="step-explanation">Crystallization separates the solid aspirin from the liquid mixture. Filtration allows for isolation and drying of the product.</p>
+  </li>
+  <li>
+    Weigh the crystals and observe physical properties (color, texture).
+    <p class="step-explanation">Weighing helps determine the yield. Observing color/texture helps assess product quality and potential impurities.</p>
+  </li>
+  <li>
+    Test for purity using the ferric chloride test (color change indicates presence of phenol groups).
+    <p class="step-explanation">The FeCl₃ test detects unreacted salicylic acid by producing a violet complex with phenol groups. A light color suggests higher purity.</p>
+  </li>
+</ol>
+
+    <h2>5. Data</h2>
+    <ul>
+      <li>Mass of Salicylic acid: <strong>0.209 g</strong></li>
+      <li>Mass of watch glass + Aspirin crystals: <strong>22.448 g</strong></li>
+      <li>Mass of watch glass: <strong>22.262 g</strong></li>
+      <li>→ Crystallized Aspirin mass: <strong>0.188 g</strong></li>
+    </ul>
+
+    <h3>Ferric Chloride Test Results:</h3>
+    <ul>
+      <li>#1 (Water + Salicylic acid + FeCl₃): <em>Dark violet</em></li>
+      <li>#2 (Water + Aspirin crystals + FeCl₃): <em>Light pink</em></li>
+      <li>#3 (Water + FeCl₃ only): <em>Light yellow</em></li>
+    </ul>
+
+    <h2>6. Conclusion</h2>
+    <p>The reaction successfully produced aspirin through esterification. Based on the light pink ferric chloride test and yield of 0.188 g, the product was moderately pure (approx. 75%). Impurities may be due to incomplete reaction or hydrolysis during workup.</p>
+  <section>
+  <h2>7. Yield Comparison Plot</h2>
+  <canvas id="yieldChart" width="400" height="200"></canvas>
+</section>
+
+<section>
+  <h2>8. Simulate Ferric Chloride Test</h2>
+  <label for="sampleSelect">Choose a sample:</label>
+  <select id="sampleSelect">
+    <option value="salicylic">Salicylic Acid</option>
+    <option value="aspirin">Crystallized Aspirin</option>
+    <option value="control">Control (Water Only)</option>
+  </select>
+  <div id="colorResult" style="margin-top: 10px; height: 50px; width: 100px; border: 1px solid #ccc;"></div>
+</section>
+
+<section>
+  <h2>9. Reaction Visualizer</h2>
+  <p>This esterification reaction forms aspirin (acetylsalicylic acid) from salicylic acid and acetic anhydride in the presence of an acid catalyst.</p>
+  <div style="display: flex; flex-direction: column; align-items: center; margin-top: 1rem;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Aspirin_synthesis_overview.svg/800px-Aspirin_synthesis_overview.svg.png" alt="Aspirin Synthesis Reaction" style="max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 8px;" />
+    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Salicylic acid + Acetic anhydride → Acetylsalicylic acid (Aspirin) + Acetic acid</p>
+  </div>
+</section>
+
+<section>
+  <h2>10. Crystallization Animation</h2>
+  <p>Watch how aspirin forms as the solution cools and crystals begin to separate from the liquid mixture.</p>
+  <div style="margin-top: 1rem; display: flex; justify-content: center; align-items: center;">
+    <div style="position: relative; width: 150px; height: 150px; background: #d0e6ff; border: 2px solid #3f51b5; border-radius: 50%; overflow: hidden;">
+      <div class="crystal" style="position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 3px; animation: fall 3s infinite ease-in-out; left: 50%; transform: translateX(-50%);"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<style>
+@keyframes fall {
+  0%   { top: -20px; opacity: 0; }
+  50%  { opacity: 1; }
+  100% { top: 120px; opacity: 0; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Bar chart for aspirin yield
+  const ctx = document.getElementById('yieldChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Theoretical Max', 'Actual Yield'],
+      datasets: [{
+        label: 'Mass (g)',
+        data: [0.209, 0.188],
+        backgroundColor: ['#90caf9', '#f48fb1']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Yield of Aspirin' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Mass (g)' }
+        }
+      }
+    }
+  });
+
+  // Simulate ferric chloride test
+  const colorMap = {
+    salicylic: 'purple',
+    aspirin: 'lightpink',
+    control: 'lightyellow'
+  };
+
+  document.getElementById('sampleSelect').addEventListener('change', function () {
+    const color = colorMap[this.value];
+    document.getElementById('colorResult').style.backgroundColor = color;
+  });
+</script>
+
+  <footer>
+    <p>&copy; 2025 ChemLabs by Gwen Furi</p>
+  </footer>
+</body>
+</html>
