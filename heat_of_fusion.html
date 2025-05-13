@@ -3,213 +3,171 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Heat of Fusion Lab</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Heat of Fusion – Toggle Simulator</title>
   <style>
-    .lab-stage { display: none; margin-top: 20px; }
-    .lab-stage.active { display: block; }
-    .controls, .lab-section { text-align: center; margin-top: 20px; }
-    #calorimeter {
-      width: 120px; height: 200px; margin: 20px auto;
-      position: relative; background: #ddd;
-      border: 4px solid #888; border-radius: 8px; overflow: hidden;
-    }
-    #ice, #water {
-      position: absolute; bottom: 0; width: 100%;
-      transition: height 1s ease;
-    }
-    #ice { height: 30px; background: #ccf; bottom: 90px; }
-    #water { height: 90px; background: #add8e6; }
+    body { font-family: sans-serif; text-align: center; background: #f4faff; margin: 0; }
+    .step { display: none; padding: 20px; }
+    .step.active { display: block; }
+    .controls { margin: 20px; }
     #thermometer {
-      margin: 10px auto; width: 10px; height: 100px;
-      background: #eee; border: 2px solid #aaa; border-radius: 5px;
+      width: 20px; height: 150px; background: #eee; border: 2px solid #999; border-radius: 10px; margin: 0 auto 10px;
       position: relative;
     }
     #mercury {
-      position: absolute; bottom: 0; width: 100%;
-      background: red; height: 0%;
+      position: absolute; bottom: 0; width: 100%; background: red;
       transition: height 1s ease;
     }
-    .summary-box, .explanation-box {
-      background: #f9fbff; border: 1px solid #c0d0f0;
-      padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 600px;
+    .cup {
+      width: 120px; height: 180px; background: #d0e6ff;
+      border: 3px solid #3f51b5; margin: 20px auto;
+      border-radius: 0 0 15px 15px; position: relative; overflow: hidden;
     }
-    input, select {
-      padding: 6px; margin: 4px; font-size: 1rem;
-      width: 100%; max-width: 200px;
+    .ice {
+      width: 20px; height: 20px; background: #ccf;
+      position: absolute; top: -30px; left: 50%;
+      transform: translateX(-50%); border-radius: 4px;
+      animation: drop 1s forwards;
+    }
+    @keyframes drop { to { top: 80px; } }
+    .explanation-box {
+      max-width: 600px; margin: 20px auto; background: #fff;
+      padding: 15px; border: 1px solid #c0d0f0;
+      border-radius: 8px; text-align: left;
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="titration.html">Titration</a>
-    <a href="freezing_point.html">Freezing Point</a>
-    <a href="heat_of_fusion.html" style="text-decoration: underline;">Heat of Fusion</a>
-    <a href="reaction_rates.html">Reaction Rates</a>
-  </nav>
 
-  <h1>Heat of Fusion Step-by-Step Simulator</h1>
+<h1>Heat of Fusion – Interactive Simulator</h1>
 
-  <div id="step1" class="lab-stage active">
-    <div class="lab-section">
-      <h3>Step 1: Enter Your Lab Values</h3>
-      <label>Temperature Unit:
-        <select id="tempUnit">
-          <option value="C">°C</option>
-          <option value="K">Kelvin</option>
-        </select>
-      </label><br>
-      <label>Mass Unit:
-        <select id="massUnit">
-          <option value="g">grams</option>
-          <option value="kg">kilograms</option>
-        </select>
-      </label><br>
-      <label>Mass of warm water: <input type="number" id="massWater" value="50" /></label><br>
-      <label>Initial temperature of water: <input type="number" id="tempInitial" value="70" /></label><br>
-      <label>Final temperature after mixing: <input type="number" id="tempFinal" value="1" /></label><br>
-      <label>Mass of melted ice: <input type="number" id="massIce" value="30" /></label>
+<!-- Step 1 -->
+<div id="step1" class="step active">
+  <h2>Step 1: Select What to Solve For</h2>
+  <div>
+    <label>
+      <input type="radio" name="mode" value="finalTemp" checked> Solve for Final Temperature
+    </label><br>
+    <label>
+      <input type="radio" name="mode" value="massIce"> Solve for Required Mass of Ice
+    </label><br><br>
+    <button onclick="nextStep()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 2 -->
+<div id="step2" class="step">
+  <h2>Step 2: Enter Starting Conditions</h2>
+  <div id="inputFields">
+    <label>Mass of warm water (g): <input id="massWater" type="number" value="50" /></label><br><br>
+    <label>Initial temp of warm water (°C): <input id="tempWater" type="number" value="70" /></label><br><br>
+    <div id="finalTempInput">
+      <label>Mass of ice (g): <input id="massIce" type="number" value="30" /></label>
     </div>
-  </div>
-
-  <div id="step2" class="lab-stage">
-    <h3>Step 2: Warming water to input temp</h3>
-    <div id="thermometer"><div id="mercury" style="height: 70%;"></div></div>
-  </div>
-
-  <div id="step3" class="lab-stage">
-    <h3>Step 3: Ice added to calorimeter</h3>
-    <div id="calorimeter">
-      <div id="ice"></div>
-      <div id="water"></div>
+    <div id="targetTempInput" style="display: none;">
+      <label>Desired final temp (°C): <input id="targetTemp" type="number" value="5" /></label>
     </div>
+    <br><button onclick="nextStep()">Add Ice</button>
   </div>
+</div>
 
-  <div id="step4" class="lab-stage">
-    <h3>Step 4: Water poured in — temp drops</h3>
-    <div id="thermometer"><div id="mercury" style="height: 1%;"></div></div>
-    <p>Simulating energy transfer...</p>
+<!-- Step 3 -->
+<div id="step3" class="step">
+  <h2>Step 3: Adding Ice...</h2>
+  <div class="cup"><div class="ice"></div></div>
+  <div class="explanation-box">
+    Adding ice at 0°C to warm water. We’ll calculate how much energy is transferred and what happens next.
   </div>
+  <button onclick="nextStep()">Start Mixing</button>
+</div>
 
-  <div id="step5" class="lab-stage">
-    <h3>Step 5: Calculate heat of fusion</h3>
-    <button onclick="calculate()">Calculate & Explain</button>
+<!-- Step 4 -->
+<div id="step4" class="step">
+  <h2>Step 4: Mixing...</h2>
+  <div id="thermometer"><div id="mercury" style="height: 70%;"></div></div>
+  <div class="explanation-box">
+    Energy is transferring from the water to the ice. Now we calculate either the final temperature or how much ice it takes to reach a target temp.
   </div>
+  <button onclick="calculate()">Calculate</button>
+</div>
 
-  <div id="step6" class="lab-stage">
-    <div class="summary-box">
-      <h3>Results Summary</h3>
-      <p><strong>Heat lost by water:</strong> <span id="qWater">—</span> kJ</p>
-      <p><strong>Heat of fusion:</strong>
-        <span id="heatFusion">—</span> kJ/g |
-        <span id="heatFusionKG">—</span> kJ/kg
-      </p>
-      <p><strong>Molar heat of fusion:</strong> <span id="molarFusion">—</span> kJ/mol</p>
-    </div>
-    <div class="explanation-box">
-      <h3>Explanation</h3>
-      <p id="explanation">—</p>
-    </div>
+<!-- Step 5 -->
+<div id="step5" class="step">
+  <h2>Results</h2>
+  <div id="thermometer"><div id="mercury"></div></div>
+  <div class="explanation-box">
+    <div id="resultsText">Calculating...</div>
   </div>
+  <button onclick="resetSim()">Try Again</button>
+</div>
 
-  <div class="controls">
-    <button id="nextBtn" onclick="nextStep()">Next Step</button>
-    <button onclick="resetSim()">Reset</button>
-  </div>
+<script>
+  const specificHeat = 4.184; // J/g°C
+  const heatFusion = 334;     // J/g
+  const molarMassIce = 18.02;
+  let currentStep = 1;
+  let mode = "finalTemp";
 
-  <script>
-    const specificHeat = 4.184;
-    const molarMassIce = 18.02;
-    let currentStep = 1;
+  function nextStep() {
+    document.getElementById(`step${currentStep}`).classList.remove("active");
+    currentStep++;
 
-    function convertTemp(val, unit) {
-      return unit === "K" ? val - 273.15 : val;
+    if (currentStep === 2) {
+      mode = document.querySelector('input[name="mode"]:checked').value;
+      document.getElementById("finalTempInput").style.display = (mode === "finalTemp") ? "block" : "none";
+      document.getElementById("targetTempInput").style.display = (mode === "massIce") ? "block" : "none";
     }
 
-    function convertMass(val, unit) {
-      return unit === "kg" ? val * 1000 : val;
-    }
+    document.getElementById(`step${currentStep}`).classList.add("active");
+  }
 
-    function nextStep() {
-      document.getElementById(`step${currentStep}`).classList.remove("active");
-      currentStep++;
-      document.getElementById(`step${currentStep}`).classList.add("active");
+  function calculate() {
+    const mWater = parseFloat(document.getElementById("massWater").value);
+    const tWater = parseFloat(document.getElementById("tempWater").value);
+    const mercury = document.querySelectorAll("#step5 #mercury")[0];
+    let result = "";
 
-      if (currentStep === 3) {
-        document.getElementById("ice").style.height = "30px";
-        document.getElementById("water").style.height = "90px";
-      }
+    if (mode === "finalTemp") {
+      const mIce = parseFloat(document.getElementById("massIce").value);
+      const A = mWater * specificHeat;
+      const B = mIce * specificHeat;
+      const C = mIce * heatFusion;
+      const T_final = (A * tWater - C) / (A + B);
+      const qWaterJ = mWater * specificHeat * (tWater - T_final);
 
-      if (currentStep === 4) {
-        document.getElementById("ice").style.height = "0px";
-        document.getElementById("water").style.height = "120px";
-        document.querySelectorAll("#thermometer #mercury").forEach(el => {
-          el.style.height = "1%";
-        });
-      }
+      mercury.style.height = `${Math.max(0, Math.min(100, T_final))}%`;
 
-      if (currentStep === 6) {
-        document.getElementById("nextBtn").style.display = "none";
-      }
-    }
-
-    function resetSim() {
-      document.querySelectorAll(".lab-stage").forEach(el => el.classList.remove("active"));
-      document.getElementById("step1").classList.add("active");
-      document.getElementById("ice").style.height = "30px";
-      document.getElementById("water").style.height = "90px";
-      document.getElementById("nextBtn").style.display = "inline-block";
-      currentStep = 1;
-    }
-
-    function calculate() {
-      const tempUnit = document.getElementById("tempUnit").value;
-      const massUnit = document.getElementById("massUnit").value;
-      const mWaterRaw = parseFloat(document.getElementById("massWater").value);
-      const mIceRaw = parseFloat(document.getElementById("massIce").value);
-      const tInitialRaw = parseFloat(document.getElementById("tempInitial").value);
-      const tFinalRaw = parseFloat(document.getElementById("tempFinal").value);
-
-      if (isNaN(mWaterRaw) || isNaN(mIceRaw) || isNaN(tInitialRaw) || isNaN(tFinalRaw)) {
-        alert("Please enter valid numeric values.");
-        return;
-      }
-
-      const mWater = convertMass(mWaterRaw, massUnit);
-      const mIce = convertMass(mIceRaw, massUnit);
-      const tInitial = convertTemp(tInitialRaw, tempUnit);
-      const tFinal = convertTemp(tFinalRaw, tempUnit);
-      const deltaT = tInitial - tFinal;
-
-      const qWaterJ = mWater * specificHeat * deltaT;
-      const qWaterKJ = qWaterJ / 1000;
-      const heatFusionPerGram = qWaterKJ / mIce;
-      const heatFusionPerKg = heatFusionPerGram * 1000;
-      const molarFusion = heatFusionPerGram * molarMassIce;
-
-      document.getElementById("qWater").textContent = qWaterKJ.toFixed(2);
-      document.getElementById("heatFusion").textContent = heatFusionPerGram.toFixed(3);
-      document.getElementById("heatFusionKG").textContent = heatFusionPerKg.toFixed(2);
-      document.getElementById("molarFusion").textContent = molarFusion.toFixed(2);
-
-      document.getElementById("explanation").innerHTML = `
-        You entered a water mass of <strong>${mWaterRaw} ${massUnit}</strong> and ice mass of <strong>${mIceRaw} ${massUnit}</strong>.
-        The water started at <strong>${tInitialRaw}°${tempUnit}</strong> and cooled to <strong>${tFinalRaw}°${tempUnit}</strong>.
-        <br><br>
-        Using <strong>q = mcΔT</strong>:
-        <br>
-        q = ${mWater}g × 4.184 J/g°C × (${deltaT.toFixed(1)}°C) = ${qWaterJ.toFixed(2)} J = ${qWaterKJ.toFixed(2)} kJ
-        <br><br>
-        Assuming all this energy melted the ice:
-        <br>
-        q / m_ice = ${qWaterKJ.toFixed(2)} kJ / ${mIce}g = <strong>${heatFusionPerGram.toFixed(3)} kJ/g</strong>
-        <br><br>
-        Molar heat of fusion: ${heatFusionPerGram.toFixed(3)} × 18.02 = <strong>${molarFusion.toFixed(2)} kJ/mol</strong>.
+      result = `
+        <strong>Final Temperature:</strong> ${T_final.toFixed(2)}°C<br><br>
+        Heat lost by water = q = m × c × ΔT = ${mWater} × 4.184 × (${tWater} - ${T_final.toFixed(2)}) = ${(qWaterJ / 1000).toFixed(2)} kJ<br><br>
+        This heat melts the ice and warms the melted water.<br>
+        <em>We assumed no heat loss to surroundings.</em>
       `;
 
-      nextStep();
+    } else if (mode === "massIce") {
+      const T_target = parseFloat(document.getElementById("targetTemp").value);
+      const A = mWater * specificHeat * (tWater - T_target);
+      const mIce = A / (heatFusion + specificHeat * T_target);
+      const qWaterJ = A;
+
+      mercury.style.height = `${Math.max(0, Math.min(100, T_target))}%`;
+
+      result = `
+        <strong>Required Mass of Ice:</strong> ${mIce.toFixed(2)} g<br><br>
+        Heat lost by water = ${mWater} × 4.184 × (${tWater} - ${T_target}) = ${(qWaterJ / 1000).toFixed(2)} kJ<br><br>
+        That much energy is needed to melt <strong>${mIce.toFixed(2)}g</strong> of ice and warm it to ${T_target}°C.
+      `;
     }
-  </script>
+
+    document.getElementById("resultsText").innerHTML = result;
+    nextStep();
+  }
+
+  function resetSim() {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    document.getElementById("step1").classList.add("active");
+    currentStep = 1;
+  }
+</script>
+
 </body>
 </html>
